@@ -39,3 +39,9 @@ def new_image(request, user_id):
     else:
         form = ImageUpload()
     return render(request, 'new_project.html', {"form":form})
+
+def profile(request, user_id):
+    images = Image.objects.all()
+    return render(request, 'all-photos/profile.html', {"images":images})
+
+@login_required(login_url=)
