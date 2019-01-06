@@ -44,4 +44,16 @@ def profile(request, user_id):
     images = Image.objects.all()
     return render(request, 'all-photos/profile.html', {"images":images})
 
-@login_required(login_url=)
+@login_required(login_url='/accounts/login/')
+def profile_edit(request, user_id):
+    if request.method == 'POST':
+        profile_form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
+        if profile_form.is_valid():
+            profile_form.save()
+            return redirect('profile', user_id)
+        else:
+            messages.error(request, ('Error'))
+    else:
+        profile_form = ProfileForm
+        (instance=request.user.profile)
+    return render(request,'all-photos/edit_profile.html',{"profile_form":profile_form})
