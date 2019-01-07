@@ -44,7 +44,7 @@ class Review(models.Model):
     usability = models.IntegerField(default=0)
     content = models.IntegerField(default=0)
     average = models.IntegerField(default=0)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    image = models.ForeignKey(Image, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
