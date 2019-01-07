@@ -58,8 +58,22 @@ def image(request, id):
         form = ReviewForm()
     return render(request, 'proj.html', {"image": image, "reviews": reviews, "form": form, "design": design, "usability": usability, "content": content, "average": average})
 
+@login_required(login_url='/accounts/login/')
+def upload_image(request):
+    if request.method == 'POST':
+        form = NewImageForm(request.FILES)
+        if form.is_valid():
+            image = form.save(commit=False)
+            image.user = request.user
+            image.save()
+        return redirect('index')
+    else:
+        form = NewImageForm()
 
-    
+    return render(request, 'upload.html', {'form': form})
+
+
+
 
 @login_required(login_url='/accounts/login/')
 def new_image(request, user_id):
@@ -77,8 +91,10 @@ def new_image(request, user_id):
     return render(request, 'new_project.html', {"form":form})
 
 def profile(request, user_id):
-    images = Image.objects.all()
-    return render(request, 'all-photos/profile.html', {"images":images})
+    user = User.objects.get(username = username)
+    images = Image.objects.filter(user = user)
+    profile = Profile.objects.get(user = user)
+    return render(request, 'all-photos/profile.html', {"images":images, "profile":profile})
 
 @login_required(login_url='/accounts/login/')
 def profile_edit(request, user_id):
