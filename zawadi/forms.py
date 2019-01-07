@@ -1,29 +1,23 @@
 from django import forms
+from .models import Image, Review, Profile
 
 class NewImageForm(forms.ModelForm):
     
     class Meta:
         model = Image
-        exclude = ['profile']
+        exclude = ['user', 'pub_date']
         widgets = {
             ''
         }
 
-class ProfileForm(forms.ModelForm)
+class UpdateProfile(forms.ModelForm)
 
     class Meta:
         model = Profile
         exclude = ['user']
 
-class ImageUpload(forms.ModelForm):
-    class Meta:
-        model = Image
-        exclude = ['pub_date', 'profile']
 
-class profileEdit(forms.Form):
-    name = forms.CharField(max_length=20)
-    username = forms.CharField(max_length=20)
-    Bio = forms.Textarea()
-    Email = forms.EmailField()
-    phone_number = forms.CharField(max_length=12)
-    
+class UpdateProfile(forms.ModelForm):
+    class Meta:
+        model = Profile
+        exclude = ['user']
