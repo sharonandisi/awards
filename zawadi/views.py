@@ -116,3 +116,10 @@ class ListProfiles(APIView):
         serializers = ProfileSerializer(all_profiles, many=True)
         return Response(srializers.data)
 
+class ListImages(APIView):
+    def get(self, request, format=None):
+        all_images = Image.objects.all()
+        serializers =  ImageSerializer(all_projects, many=True)
+        return Response(serializers.data)
+
+    
