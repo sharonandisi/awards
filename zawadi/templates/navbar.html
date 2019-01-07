@@ -29,7 +29,13 @@
                     <li><a href="#">HOME</a></li>
                     <li><a href="{%url 'new-image' user.id %}">UPLOAD</a></li>
                     <li><a href="{% url 'profile' user.id %}">PROFILE</a></li>
-                    <li><a href="{% url 'profile' user.id %}">API</a></li>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" id="#navDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">APIs</a>
+                        <div class="dropdown-menu" aria-labelledby="navDropdown">
+                            <a href="/api/profiles/" class="dropdown-item">Profiles</a><a href="/api/images/" class="dropdown-item">Projects</a>
+                        </div>
+                    </li>
 
                     <li><a href="#">CONTACT</a></li>
 

@@ -11,7 +11,7 @@ urlpatterns=[
     url(r'^profile_edit/(\d+)$', views.profile_edit, name='edit_profile'),
     url(r'^search/$', views.search_results, name='search_results'),
     url(r'^api/profiles/$', views.ListProfiles.as_view()),
-    url(r'^api/projects/$', views.ListImages.as_view()),
+    url(r'^api/images/$', views.ListImages.as_view()),
 ]
 
 
