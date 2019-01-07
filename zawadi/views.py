@@ -1,14 +1,28 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from .forms import NewImageForm, ReviewForm, UpdateProfil
+from django.contrib.auth.models import User
 from django.contrib import messages
+from .models import Profile, Image, Review
+from django.urls import reverse
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib.auth.decorators import login_required
+from django.db.models import Avg
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .serializer import ProfileSerializer, ProjectSerializer
 
 
 # Create your views here.
 @login_required(login_url='/accounts/login/')
 def index(request):
-    images = Image.objects.all()
+    if User.objects.filter(username = request.user.username).exists():
+        user = User.objects.get(username=request.user)
+        if not Image.objects.filter(user = request.user).exists():
+             Image.objects.create(user = user)
+    images = Image.objects.order_by('-pub-date')
+    return render(request,"index.html",{"images":images})
+
 
 
 def search_results(request):
