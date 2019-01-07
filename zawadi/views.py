@@ -37,7 +37,29 @@ def search_results(request):
         message = "You haven't searched for any term"
         return render(request, 'all-photos/search.html', {"message":message})
 
+def image(request, id):
+    if request.user.is_authenticated:
+        user = User.objects.get(username = request.user)
+    image = Image.objects.get(id = id)
+    design = reviews.aggregate(Avg('design'))['design__avg']
+    usability = reviews.aggregate(Avg('usability'))['usability__avg']
+    content = reviews.aggregate(Avg('content'))['content__avg']
+    reviews = Review.objects.filter(image = image)
+     if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit = False)
+            review.average = review.design + review.usability + review.content)
+            review.image = image
+            review.user = user
+            review.save()
+        return redirect('image', id)
+    else:
+        form = ReviewForm()
+    return render(request, 'proj.html', {"image": image, "reviews": reviews, "form": form, "design": design, "usability": usability, "content": content, "average": average})
 
+
+    
 
 @login_required(login_url='/accounts/login/')
 def new_image(request, user_id):
