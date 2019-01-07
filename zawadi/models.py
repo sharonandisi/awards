@@ -17,3 +17,25 @@ class Image(models.Model):
     def __str__(self):
         return self.title
 
+class Profile(models.Model):
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name= "profile")
+    first_name = models.CharField(max_length =30)
+    surname = models.CharField(max_length =30)
+    username = models.CharField(max_length =30)
+    avatar = models.ImageField(upload_to = 'avatar', blank=True)
+    bio = models.CharField(max_length =30)
+    email = models.EmailField()
+
+    def __str__(self):
+        return self.first_name
+
+    def save_profile(self):
+        self.save()
+
+    def delete_profile(self):
+        self.delete()
+    def search_profile(self):
+        self.search()
+
+
