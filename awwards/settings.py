@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'bootstrap4',
+    'bootstrap3',
     'zawadi',
     'tinymce',
     'rest_framework',
@@ -142,3 +143,4 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 django_heroku.settings(locals())
 
+LOGIN_REDIRECT_URL = 'index'

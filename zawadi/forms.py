@@ -10,7 +10,7 @@ class NewImageForm(forms.ModelForm):
             ''
         }
 
-class UpdateProfile(forms.ModelForm)
+class UpdateProfile(forms.ModelForm):
 
     class Meta:
         model = Profile
@@ -21,3 +21,8 @@ class UpdateProfile(forms.ModelForm):
     class Meta:
         model = Profile
         exclude = ['user']
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        exclude = ['average','image', 'user']

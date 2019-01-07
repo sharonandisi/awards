@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import NewImageForm, ReviewForm, UpdateProfil
+from .forms import NewImageForm, ReviewForm, UpdateProfile
 from django.contrib.auth.models import User
 from django.contrib import messages
 from .models import Profile, Image, Review
@@ -10,18 +10,17 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Avg
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializer import ProfileSerializer, ProjectSerializer
+from .serializer import ProfileSerializer, ImageSerializer
 
 
 # Create your views here.
-@login_required(login_url='/accounts/login/')
+
 def index(request):
     if User.objects.filter(username = request.user.username).exists():
         user = User.objects.get(username=request.user)
         if not Image.objects.filter(user = request.user).exists():
              Image.objects.create(user = user)
-    images = Image.objects.order_by('-pub-date')
-    return render(request,"index.html",{"images":images})
+    return render(request,"index.html")
 
 
 
@@ -45,11 +44,11 @@ def image(request, id):
     usability = reviews.aggregate(Avg('usability'))['usability__avg']
     content = reviews.aggregate(Avg('content'))['content__avg']
     reviews = Review.objects.filter(image = image)
-     if request.method == 'POST':
+    if request.method == 'POST':
         form = ReviewForm(request.POST)
         if form.is_valid():
             review = form.save(commit = False)
-            review.average = review.design + review.usability + review.content)
+            review.average = review.design + review.usability + review.content
             review.image = image
             review.user = user
             review.save()
@@ -76,19 +75,19 @@ def upload_image(request):
 
 
 @login_required(login_url='/accounts/login/')
-def new_image(request, user_id):
+def new_image(request):
     current_user =  request.user
     if request.method == 'POST':
-        form = ImageUpload(request.POST, request.FILES)
+        form = NewImageForm(request.POST, request.FILES)
         if form.is_valid():
             image = form.save(commit=False)
             image.developer = current_user
             image.save()
-        return redirect('present')
+        return redirect('index')
 
     else:
-        form = ImageUpload()
-    return render(request, 'new_project.html', {"form":form})
+        form = NewImageForm()
+    return render(request, 'all-photos/proj.html', {"form":form})
 
 def profile(request, user_id):
     user = User.objects.get(username = username)
@@ -106,15 +105,14 @@ def profile_edit(request, user_id):
         else:
             messages.error(request, ('Error'))
     else:
-        profile_form = ProfileForm
-        (instance=request.user.profile)
+        profile_form = ProfileForm(instance=request.user.profile)
     return render(request,'all-photos/edit_profile.html',{"profile_form":profile_form})
 
 class ListProfiles(APIView):
     def get(self, request, format=None):
         all_profiles = Profile.objects.all()
         serializers = ProfileSerializer(all_profiles, many=True)
-        return Response(srializers.data)
+        return Response(serializers.data)
 
 class ListImages(APIView):
     def get(self, request, format=None):
