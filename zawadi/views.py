@@ -109,3 +109,10 @@ def profile_edit(request, user_id):
         profile_form = ProfileForm
         (instance=request.user.profile)
     return render(request,'all-photos/edit_profile.html',{"profile_form":profile_form})
+
+class ListProfiles(APIView):
+    def get(self, request, format=None):
+        all_profiles = Profile.objects.all()
+        serializers = ProfileSerializer(all_profiles, many=True)
+        return Response(srializers.data)
+
