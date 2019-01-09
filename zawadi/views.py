@@ -14,15 +14,11 @@ from .serializer import ProfileSerializer, ImageSerializer
 
 
 # Create your views here.
-
+@login_required(login_url='/accounts/login/')
 def index(request):
-    if User.objects.filter(username = request.user.username).exists():
-        user = User.objects.get(username=request.user)
-        if not Image.objects.filter(user = request.user).exists():
-             Image.objects.create(user = user)
-    return render(request,"index.html")
+    images = Image.objects.all()
 
-
+    return render(request, 'index.html', { "images":images})
 
 def search_results(request):
     if 'image' in request.GET and request.get["image"]:
@@ -40,10 +36,11 @@ def image(request, id):
     if request.user.is_authenticated:
         user = User.objects.get(username = request.user)
     image = Image.objects.get(id = id)
+    reviews = Review.objects.filter(image = image)
     design = reviews.aggregate(Avg('design'))['design__avg']
     usability = reviews.aggregate(Avg('usability'))['usability__avg']
     content = reviews.aggregate(Avg('content'))['content__avg']
-    reviews = Review.objects.filter(image = image)
+    
     if request.method == 'POST':
         form = ReviewForm(request.POST)
         if form.is_valid():
@@ -55,7 +52,7 @@ def image(request, id):
         return redirect('image', id)
     else:
         form = ReviewForm()
-    return render(request, 'proj.html', {"image": image, "reviews": reviews, "form": form, "design": design, "usability": usability, "content": content, "average": average})
+    return render(request, 'all-photos/proj.html', {"image": image, "reviews": reviews, "form": form, "design": design, "usability": usability, "content": content})
 
 @login_required(login_url='/accounts/login/')
 def upload_image(request):
@@ -81,18 +78,17 @@ def new_image(request):
         form = NewImageForm(request.POST, request.FILES)
         if form.is_valid():
             image = form.save(commit=False)
-            image.developer = current_user
+            image.user = current_user
             image.save()
         return redirect('index')
 
     else:
         form = NewImageForm()
-    return render(request, 'all-photos/proj.html', {"form":form})
+    return render(request, 'new_image.html', {"form":form})
 
 def profile(request, user_id):
-    user = User.objects.get(username = username)
-    images = Image.objects.filter(user = user)
-    profile = Profile.objects.get(user = user)
+    images = Image.objects.filter(user_id= user_id)
+    profile = Profile.objects.get(id = id)
     return render(request, 'all-photos/profile.html', {"images":images, "profile":profile})
 
 @login_required(login_url='/accounts/login/')

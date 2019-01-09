@@ -1,0 +1,71 @@
+{% extends 'all-photos/base.html' %}
+{% load bootstrap4 %}
+{% block content %}
+<div class="container">
+    <div class="card my-5">
+        <img src="{{image.image.url}}" alt="" class="card-img-top">
+        <div class="card-body">
+            <p class="h1 card-title">{{project.title}}</p>
+            <p class="h2 card-subtitle my-2">by <a href="{% url 'profile' image.user.username %}">{{image.user.username}}</a></p>
+            <p class="card-text">Posted on {{image.pub_date | date}}</p>
+            <a href="{{image.url}}" target="_blank" class="card-link">View Site</a>
+            <p class="card-text mt-2">{{image.description}}</p>
+            <p class="card-text">Design - {{design}}</p>
+            <p class="card-text">Usability - {{usability}}</p>
+            <p class="card-text">Content - {{content}}</p>
+            <p class="card-text">Average - {{average}}</p>
+            {% if user.is_authenticated and project.user != user %}
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#exampleModal">
+                Vote
+            </button>
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="card">
+                            <div class="card-body">
+                                <form enctype="multipart/form-data" method="post">
+                                    {% csrf_token %}
+                                    {% bootstrap_form form %}
+                                    <input type="submit" value="Submit" class="btn btn-primary">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% elif user == image.user %}
+            <p class="h5">You can't vote on your own site.</p>
+            {% else %}
+            <p class="h5">Log in to vote!</p>
+            {% endif %}
+        </div>
+    </div>
+    {% if reviews %}
+    <ul class="list-group mb-5">
+        {% for review in reviews %}
+        <li class="list-group-item d-flex justify-content-between mb-3">
+            <div class="media">
+                <img src="{{review.user.profile.avatar.url}}" alt="{{review.user.username}}" class="mr-3" width="45"
+                    height="45">
+                <div class="media-body">
+                    <h5 class="mt-0">{{review.user.username}}</h5>
+                    {{review.user.profile.bio}}
+                </div>
+            </div>
+            <div class=" w-25 d-flex justify-content-between">
+                <span class="h3">D - {{review.design}}</span>
+                <span class="h3">U - {{review.usability}}</span>
+                <span class="h3">C - {{review.content}}</span>
+                <span class="h3">A - {{review.average}}</span>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No reviews yet</p>
+    {% endif %}
+</div>
+{% endblock %}

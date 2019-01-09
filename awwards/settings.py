@@ -141,6 +141,6 @@ EMAIL_PORT = config('EMAIL_PORT')
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
-django_heroku.settings(locals())
 
 LOGIN_REDIRECT_URL = 'index'
+django_heroku.settings(locals())
